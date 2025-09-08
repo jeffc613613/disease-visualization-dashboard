@@ -19,6 +19,12 @@
 
 ![系統架構圖](docs/architecture.png)
 
+## 成果展示
+全球概況 + 各國概況
+![全球、各國概況圖](screenshots/global_view.png)
+各國數據表格 + 疫苗接種狀況
+![各國數據、疫苗接種狀況圖](screenshots/global_vaccine_tracker.png)
+
 ## 安裝與使用
 1. 安裝 Node-RED（若尚未安裝）：
     ```bash
@@ -28,12 +34,12 @@
     ```bash
     node-red
     ```
-3.  開啟瀏覽器進入 http://localhost:1880
+3.  開啟瀏覽器進入 http://localhost:1880/ui
 
 4.  匯入 flows.json：
- - 點選右上角選單 → Import
- - 貼上 flows.json 內容
- - 按下 Deploy 即可
+- 點選右上角選單 → Import
+- 貼上 flows.json 內容
+- 按下 Deploy 即可
 
 ## 專案結構
     ```bash
@@ -42,12 +48,12 @@
     │── flows.json         # Node-RED Flow (疾病可視化儀表板.json)
     │── screenshots/       # 儀表板畫面截圖
     │   ├── global_view.png
-    │   ├── country_view.png
+    │   ├── global_vaccine_tracker.png
     │── docs/
     │   └── architecture.png   # Flow 架構截圖
     ```
 ## 使用技術
- - Node-RED
- - JavaScript (for Function nodes)
- - Disease.sh API
- - Node-RED Dashboard (ui_template / ui_gauge / ui_table)
+- Node-RED
+- JavaScript (for Function nodes)
+- Disease.sh API
+- Node-RED Dashboard (ui_template / ui_gauge / ui_table)
