@@ -1,0 +1,2096 @@
+[
+    {
+        "id": "dcb11d42f41b6ef5",
+        "type": "tab",
+        "label": "COVID-19 Dashboard",
+        "disabled": false,
+        "info": "全球COVID-19疫情監控儀表板"
+    },
+    {
+        "id": "20141238c78380b4",
+        "type": "ui_dropdown",
+        "z": "dcb11d42f41b6ef5",
+        "name": "",
+        "label": "選擇監控疾病",
+        "tooltip": "",
+        "place": "Select option",
+        "group": "85c8614b301170a7",
+        "order": 1,
+        "width": 12,
+        "height": 2,
+        "passthru": true,
+        "multiple": false,
+        "options": [
+            {
+                "label": "COVID-19",
+                "value": "covid19",
+                "type": "str"
+            }
+        ],
+        "payload": "",
+        "topic": "payload",
+        "topicType": "msg",
+        "className": "",
+        "x": 240,
+        "y": 300,
+        "wires": [
+            [
+                "6ff4fa008b86fd46",
+                "9b16b502c85bb102"
+            ]
+        ]
+    },
+    {
+        "id": "6ff4fa008b86fd46",
+        "type": "http request",
+        "z": "dcb11d42f41b6ef5",
+        "name": "",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "https://disease.sh/v3/covid-19/all",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 600,
+        "y": 100,
+        "wires": [
+            [
+                "04076df9c09386be"
+            ]
+        ]
+    },
+    {
+        "id": "082dea0189f97dd2",
+        "type": "http request",
+        "z": "dcb11d42f41b6ef5",
+        "name": "",
+        "method": "use",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 740,
+        "y": 460,
+        "wires": [
+            [
+                "8919af14d7d41f50"
+            ]
+        ]
+    },
+    {
+        "id": "04076df9c09386be",
+        "type": "function",
+        "z": "dcb11d42f41b6ef5",
+        "name": "",
+        "func": "// Extract data\nconst cases = msg.payload.cases || 0;\nconst deaths = msg.payload.deaths || 0;\nconst recovered = msg.payload.recovered || 0;\nconst active = msg.payload.active || 0;\nconst population = msg.payload.population || 0;\n\n// Calculate rates\nconst deathRate = cases > 0 ? (deaths / cases * 100).toFixed(2) : 0;\nconst recoveryRate = cases > 0 ? (recovered / cases * 100).toFixed(2) : 0;\nconst activeRate = cases > 0 ? (active / population * 100).toFixed(2) : 0;\n\n// Create messages for different UI components\nconst summaryMsg = {\n    payload: {\n        title: \"全球概況\",\n        cases: cases.toLocaleString(),\n        deaths: deaths.toLocaleString(),\n        recovered: recovered.toLocaleString(),\n        active: active.toLocaleString(),\n        population: population.toLocaleString(),\n        lastUpdate: new Date().toLocaleString('zh-TW', { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' })\n    }\n};\n\nconst deathRateMsg = {\n    payload: parseFloat(deathRate),\n    topic: \"死亡率\"\n};\n\nconst recoveryRateMsg = {\n    payload: parseFloat(recoveryRate),\n    topic: \"康復率\"\n};\n\nconst activeRateMsg = {\n    payload: parseFloat(activeRate),\n    topic: \"活躍病例率\"\n};\n\nreturn [summaryMsg, deathRateMsg, recoveryRateMsg, activeRateMsg];",
+        "outputs": 4,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1030,
+        "y": 100,
+        "wires": [
+            [
+                "3675fa93a7555076"
+            ],
+            [
+                "c903e542b8a2fa93"
+            ],
+            [
+                "8a803a6bb9b12a7b"
+            ],
+            [
+                "be4d4296ca8b40e6",
+                "52c71ad94aecdd32"
+            ]
+        ]
+    },
+    {
+        "id": "8919af14d7d41f50",
+        "type": "function",
+        "z": "dcb11d42f41b6ef5",
+        "name": "",
+        "func": "// Extract data\nconst cases = msg.payload.cases || 0;\nconst deaths = msg.payload.deaths || 0;\nconst recovered = msg.payload.recovered || 0;\nconst active = msg.payload.active || 0;\nconst population = msg.payload.population || 0;\n\n// Calculate rates\nconst deathRate = cases > 0 ? (deaths / cases * 100).toFixed(2) : 0;\nconst recoveryRate = cases > 0 ? (recovered / cases * 100).toFixed(2) : 0;\nconst activeRate = cases > 0 ? (active / population * 100).toFixed(2) : 0;\n\n// Create messages for different UI components\nconst summaryMsg = {\n    payload: {\n        title: \"台灣概況\",\n        cases: cases.toLocaleString(),\n        deaths: deaths.toLocaleString(),\n        recovered: recovered.toLocaleString(),\n        active: active.toLocaleString(),\n        population: population.toLocaleString(),\n        lastUpdate: new Date().toLocaleString('zh-TW', { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' })\n    }\n};\n\nconst deathRateMsg = {\n    payload: parseFloat(deathRate),\n    topic: \"死亡率\"\n};\n\nconst recoveryRateMsg = {\n    payload: parseFloat(recoveryRate),\n    topic: \"康復率\"\n};\n\nconst activeRateMsg = {\n    payload: parseFloat(activeRate),\n    topic: \"活躍病例率\"\n};\n\n\nreturn [summaryMsg, deathRateMsg, recoveryRateMsg, activeRateMsg];",
+        "outputs": 4,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 970,
+        "y": 460,
+        "wires": [
+            [
+                "392f96e99f0f452e"
+            ],
+            [
+                "876546540b948c0a"
+            ],
+            [
+                "d0540f2d6d568239"
+            ],
+            [
+                "855658165184140d",
+                "edf97a88f9b4dbcd"
+            ]
+        ]
+    },
+    {
+        "id": "392f96e99f0f452e",
+        "type": "ui_template",
+        "z": "dcb11d42f41b6ef5",
+        "group": "5781e3dc3d91229c",
+        "name": "各國概況",
+        "order": 1,
+        "width": 12,
+        "height": 9,
+        "format": "<div>\n    <!-- 總人口卡片（單獨一列） -->\n    <div style=\"margin-bottom: 20px;\">\n        <div\n            style=\"background-color: #f5f5f5; border-radius: 10px; padding: 18px; text-align: center; box-shadow: 0 3px 6px rgba(0,0,0,0.1); border-left: 5px solid #5c6bc0;\">\n            <h3 style=\"margin-top: 0; color: #424242;\">總人口</h3>\n            <p style=\"font-size: 28px; font-weight: bold; color: #5c6bc0; margin: 15px 0;\">{{msg.payload.population}}\n            </p>\n        </div>\n    </div>\n\n    <!-- 其他四個卡片 -->\n    <div style=\"display: flex; flex-wrap: wrap; gap: 15px; justify-content: center;\">\n        <!-- 確診卡片 -->\n        <div\n            style=\"flex: 1; min-width: 200px; background-color: #e3f2fd; border-radius: 10px; padding: 18px; text-align: center; box-shadow: 0 3px 6px rgba(0,0,0,0.1); border-left: 5px solid #42a5f5;\">\n            <h3 style=\"margin-top: 0; color: #1565c0;\">確診數</h3>\n            <p style=\"font-size: 26px; font-weight: bold; color: #1976d2; margin: 15px 0;\">{{msg.payload.cases}}</p>\n        </div>\n\n        <!-- 死亡卡片 -->\n        <div\n            style=\"flex: 1; min-width: 200px; background-color: #ffebee; border-radius: 10px; padding: 18px; text-align: center; box-shadow: 0 3px 6px rgba(0,0,0,0.1); border-left: 5px solid #ef5350;\">\n            <h3 style=\"margin-top: 0; color: #c62828;\">死亡數</h3>\n            <p style=\"font-size: 26px; font-weight: bold; color: #d32f2f; margin: 15px 0;\">{{msg.payload.deaths}}</p>\n        </div>\n\n        <!-- 康復卡片 -->\n        <div\n            style=\"flex: 1; min-width: 200px; background-color: #e8f5e9; border-radius: 10px; padding: 18px; text-align: center; box-shadow: 0 3px 6px rgba(0,0,0,0.1); border-left: 5px solid #66bb6a;\">\n            <h3 style=\"margin-top: 0; color: #2e7d32;\">康復數</h3>\n            <p style=\"font-size: 26px; font-weight: bold; color: #388e3c; margin: 15px 0;\">{{msg.payload.recovered}}</p>\n        </div>\n\n        <!-- 活躍病例卡片 -->\n        <div\n            style=\"flex: 1; min-width: 200px; background-color: #fff8e1; border-radius: 10px; padding: 18px; text-align: center; box-shadow: 0 3px 6px rgba(0,0,0,0.1); border-left: 5px solid #ffb300;\">\n            <h3 style=\"margin-top: 0; color: #f57f17;\">活躍病例</h3>\n            <p style=\"font-size: 26px; font-weight: bold; color: #ff8f00; margin: 15px 0;\">{{msg.payload.active}}</p>\n        </div>\n    </div>\n\n    <p style=\"text-align: right; margin-top: 15px; color: #757575; font-size: 12px;\">最後更新: {{msg.payload.lastUpdate}}\n    </p>\n</div>",
+        "storeOutMessages": false,
+        "fwdInMessages": false,
+        "resendOnRefresh": false,
+        "templateScope": "local",
+        "className": "",
+        "x": 1260,
+        "y": 420,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c903e542b8a2fa93",
+        "type": "ui_gauge",
+        "z": "dcb11d42f41b6ef5",
+        "name": "全球死亡率",
+        "group": "d2d75e8428895025",
+        "order": 3,
+        "width": 6,
+        "height": 6,
+        "gtype": "gage",
+        "title": "全球死亡率",
+        "label": "%",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "10",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "2",
+        "seg2": "5",
+        "diff": false,
+        "className": "",
+        "x": 1330,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "8a803a6bb9b12a7b",
+        "type": "ui_gauge",
+        "z": "dcb11d42f41b6ef5",
+        "name": "全球康復率",
+        "group": "d2d75e8428895025",
+        "order": 2,
+        "width": 6,
+        "height": 6,
+        "gtype": "gage",
+        "title": "全球康復率",
+        "label": "%",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#ca3838",
+            "#e6e600",
+            "#00b500"
+        ],
+        "seg1": "40",
+        "seg2": "80",
+        "diff": false,
+        "className": "",
+        "x": 1330,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "876546540b948c0a",
+        "type": "ui_gauge",
+        "z": "dcb11d42f41b6ef5",
+        "name": "死亡率",
+        "group": "5781e3dc3d91229c",
+        "order": 3,
+        "width": 6,
+        "height": 6,
+        "gtype": "gage",
+        "title": "死亡率",
+        "label": "%",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "20",
+        "seg2": "50",
+        "diff": false,
+        "className": "",
+        "x": 1250,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "d0540f2d6d568239",
+        "type": "ui_gauge",
+        "z": "dcb11d42f41b6ef5",
+        "name": "康復率",
+        "group": "5781e3dc3d91229c",
+        "order": 2,
+        "width": 6,
+        "height": 6,
+        "gtype": "gage",
+        "title": "康復率",
+        "label": "%",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#ca3838",
+            "#e6e600",
+            "#00b500"
+        ],
+        "seg1": "40",
+        "seg2": "80",
+        "diff": false,
+        "className": "",
+        "x": 1250,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "3675fa93a7555076",
+        "type": "ui_template",
+        "z": "dcb11d42f41b6ef5",
+        "group": "d2d75e8428895025",
+        "name": "全球概況",
+        "order": 1,
+        "width": 12,
+        "height": 9,
+        "format": "<div>\n    <!-- 總人口卡片（單獨一列） -->\n    <div style=\"margin-bottom: 20px;\">\n        <div\n            style=\"background-color: #f5f5f5; border-radius: 10px; padding: 18px; text-align: center; box-shadow: 0 3px 6px rgba(0,0,0,0.1); border-left: 5px solid #5c6bc0;\">\n            <h3 style=\"margin-top: 0; color: #424242;\">總人口</h3>\n            <p style=\"font-size: 28px; font-weight: bold; color: #5c6bc0; margin: 15px 0;\">{{msg.payload.population}}\n            </p>\n        </div>\n    </div>\n\n    <!-- 其他四個卡片 -->\n    <div style=\"display: flex; flex-wrap: wrap; gap: 15px; justify-content: center;\">\n        <!-- 確診卡片 -->\n        <div\n            style=\"flex: 1; min-width: 200px; background-color: #e3f2fd; border-radius: 10px; padding: 18px; text-align: center; box-shadow: 0 3px 6px rgba(0,0,0,0.1); border-left: 5px solid #42a5f5;\">\n            <h3 style=\"margin-top: 0; color: #1565c0;\">全球確診數</h3>\n            <p style=\"font-size: 26px; font-weight: bold; color: #1976d2; margin: 15px 0;\">{{msg.payload.cases}}</p>\n        </div>\n\n        <!-- 死亡卡片 -->\n        <div\n            style=\"flex: 1; min-width: 200px; background-color: #ffebee; border-radius: 10px; padding: 18px; text-align: center; box-shadow: 0 3px 6px rgba(0,0,0,0.1); border-left: 5px solid #ef5350;\">\n            <h3 style=\"margin-top: 0; color: #c62828;\">死亡數</h3>\n            <p style=\"font-size: 26px; font-weight: bold; color: #d32f2f; margin: 15px 0;\">{{msg.payload.deaths}}</p>\n        </div>\n\n        <!-- 康復卡片 -->\n        <div\n            style=\"flex: 1; min-width: 200px; background-color: #e8f5e9; border-radius: 10px; padding: 18px; text-align: center; box-shadow: 0 3px 6px rgba(0,0,0,0.1); border-left: 5px solid #66bb6a;\">\n            <h3 style=\"margin-top: 0; color: #2e7d32;\">康復數</h3>\n            <p style=\"font-size: 26px; font-weight: bold; color: #388e3c; margin: 15px 0;\">{{msg.payload.recovered}}</p>\n        </div>\n\n        <!-- 活躍病例卡片 -->\n        <div\n            style=\"flex: 1; min-width: 200px; background-color: #fff8e1; border-radius: 10px; padding: 18px; text-align: center; box-shadow: 0 3px 6px rgba(0,0,0,0.1); border-left: 5px solid #ffb300;\">\n            <h3 style=\"margin-top: 0; color: #f57f17;\">活躍病例</h3>\n            <p style=\"font-size: 26px; font-weight: bold; color: #ff8f00; margin: 15px 0;\">{{msg.payload.active}}</p>\n        </div>\n    </div>\n\n    <p style=\"text-align: right; margin-top: 15px; color: #757575; font-size: 12px;\">最後更新: {{msg.payload.lastUpdate}}\n    </p>\n</div>",
+        "storeOutMessages": false,
+        "fwdInMessages": false,
+        "resendOnRefresh": false,
+        "templateScope": "local",
+        "className": "",
+        "x": 1320,
+        "y": 60,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "9b16b502c85bb102",
+        "type": "http request",
+        "z": "dcb11d42f41b6ef5",
+        "name": "獲取各國數據",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "https://disease.sh/v3/covid-19/countries",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 640,
+        "y": 300,
+        "wires": [
+            [
+                "c3b9dd8408cdaf31"
+            ]
+        ]
+    },
+    {
+        "id": "c3b9dd8408cdaf31",
+        "type": "function",
+        "z": "dcb11d42f41b6ef5",
+        "name": "處理各國數據",
+        "func": "// 選擇前10個確診病例最多的國家\nlet topCountries = msg.payload.sort((a, b) => b.cases - a.cases).slice(0, 10);\n\n// 為柱狀圖準備數據\nmsg.topCases = {\n    labels: topCountries.map(c => c.country),\n    series: ['確診病例'],\n    data: [topCountries.map(c => c.cases)]\n};\n\n// 為表格準備數據\nmsg.countryTable = topCountries.map(c => ({\n    country: c.country,\n    cases: c.cases,\n    deaths: c.deaths,\n    recovered: c.recovered,\n    active: c.active\n}));\n\n// 為地圖準備數據\nmsg.mapData = msg.payload.map(c => ({\n    name: c.country,\n    code: c.countryInfo.iso2,\n    value: c.cases,\n    latitude: c.countryInfo.lat,\n    longitude: c.countryInfo.long\n}));\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 940,
+        "y": 300,
+        "wires": [
+            [
+                "8913eae01cb2aa2c"
+            ]
+        ]
+    },
+    {
+        "id": "8913eae01cb2aa2c",
+        "type": "ui_table",
+        "z": "dcb11d42f41b6ef5",
+        "group": "8a9f423b26014113",
+        "name": "各國數據表格",
+        "order": 1,
+        "width": 12,
+        "height": 24,
+        "columns": [
+            {
+                "field": "country",
+                "title": "國家",
+                "width": "",
+                "align": "left",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            },
+            {
+                "field": "cases",
+                "title": "確診病例",
+                "width": "",
+                "align": "center",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            },
+            {
+                "field": "deaths",
+                "title": "死亡人數",
+                "width": "",
+                "align": "center",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            },
+            {
+                "field": "recovered",
+                "title": "已康復",
+                "width": "",
+                "align": "center",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            },
+            {
+                "field": "active",
+                "title": "活躍病例",
+                "width": "",
+                "align": "center",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            }
+        ],
+        "outputs": 0,
+        "cts": false,
+        "x": 1280,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "8b7305c887409a22",
+        "type": "function",
+        "z": "dcb11d42f41b6ef5",
+        "name": "處理疫苗數據",
+        "func": "msg.payload = msg.payload.map(country => ({\n    countryName: country.country,\n    vaccineData: country.timeline[Object.keys(country.timeline)[0]]\n}));\n\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 940,
+        "y": 360,
+        "wires": [
+            [
+                "481140f09c7afae6"
+            ]
+        ]
+    },
+    {
+        "id": "481140f09c7afae6",
+        "type": "ui_table",
+        "z": "dcb11d42f41b6ef5",
+        "group": "a3bbd9e94bb720c8",
+        "name": "各國疫苗接種數據",
+        "order": 1,
+        "width": 12,
+        "height": 24,
+        "columns": [
+            {
+                "field": "countryName",
+                "title": "國家",
+                "width": "",
+                "align": "left",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            },
+            {
+                "field": "vaccineData",
+                "title": "接種數",
+                "width": "",
+                "align": "left",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            }
+        ],
+        "outputs": 0,
+        "cts": false,
+        "x": 1290,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "22fc15bfe3605aef",
+        "type": "function",
+        "z": "dcb11d42f41b6ef5",
+        "name": "",
+        "func": "// 從下拉選單獲取選中的值\nvar country = msg.payload;\n// 構建 URL\nmsg.url = `https://disease.sh/v3/covid-19/countries/${country}`;\n// 設置 HTTP 方法\nmsg.method = \"GET\";\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 530,
+        "y": 460,
+        "wires": [
+            [
+                "082dea0189f97dd2"
+            ]
+        ]
+    },
+    {
+        "id": "f2b934edee5ba8c6",
+        "type": "ui_dropdown",
+        "z": "dcb11d42f41b6ef5",
+        "name": "選擇國家",
+        "label": "選擇國家",
+        "tooltip": "選擇一個國家以查看疫情數據",
+        "place": "選擇一個國家",
+        "group": "85c8614b301170a7",
+        "order": 2,
+        "width": 12,
+        "height": 22,
+        "passthru": true,
+        "multiple": false,
+        "options": [
+            {
+                "label": "Afghanistan",
+                "value": "AF",
+                "type": "str"
+            },
+            {
+                "label": "Albania",
+                "value": "AL",
+                "type": "str"
+            },
+            {
+                "label": "Algeria",
+                "value": "DZ",
+                "type": "str"
+            },
+            {
+                "label": "Andorra",
+                "value": "AD",
+                "type": "str"
+            },
+            {
+                "label": "Angola",
+                "value": "AO",
+                "type": "str"
+            },
+            {
+                "label": "Anguilla",
+                "value": "AI",
+                "type": "str"
+            },
+            {
+                "label": "Antigua and Barbuda",
+                "value": "AG",
+                "type": "str"
+            },
+            {
+                "label": "Argentina",
+                "value": "AR",
+                "type": "str"
+            },
+            {
+                "label": "Armenia",
+                "value": "AM",
+                "type": "str"
+            },
+            {
+                "label": "Aruba",
+                "value": "AW",
+                "type": "str"
+            },
+            {
+                "label": "Australia",
+                "value": "AU",
+                "type": "str"
+            },
+            {
+                "label": "Austria",
+                "value": "AT",
+                "type": "str"
+            },
+            {
+                "label": "Azerbaijan",
+                "value": "AZ",
+                "type": "str"
+            },
+            {
+                "label": "Bahamas",
+                "value": "BS",
+                "type": "str"
+            },
+            {
+                "label": "Bahrain",
+                "value": "BH",
+                "type": "str"
+            },
+            {
+                "label": "Bangladesh",
+                "value": "BD",
+                "type": "str"
+            },
+            {
+                "label": "Barbados",
+                "value": "BB",
+                "type": "str"
+            },
+            {
+                "label": "Belarus",
+                "value": "BY",
+                "type": "str"
+            },
+            {
+                "label": "Belgium",
+                "value": "BE",
+                "type": "str"
+            },
+            {
+                "label": "Belize",
+                "value": "BZ",
+                "type": "str"
+            },
+            {
+                "label": "Benin",
+                "value": "BJ",
+                "type": "str"
+            },
+            {
+                "label": "Bermuda",
+                "value": "BM",
+                "type": "str"
+            },
+            {
+                "label": "Bhutan",
+                "value": "BT",
+                "type": "str"
+            },
+            {
+                "label": "Bolivia",
+                "value": "BO",
+                "type": "str"
+            },
+            {
+                "label": "Bosnia",
+                "value": "BA",
+                "type": "str"
+            },
+            {
+                "label": "Botswana",
+                "value": "BW",
+                "type": "str"
+            },
+            {
+                "label": "Brazil",
+                "value": "BR",
+                "type": "str"
+            },
+            {
+                "label": "British Virgin Islands",
+                "value": "VG",
+                "type": "str"
+            },
+            {
+                "label": "Brunei",
+                "value": "BN",
+                "type": "str"
+            },
+            {
+                "label": "Bulgaria",
+                "value": "BG",
+                "type": "str"
+            },
+            {
+                "label": "Burkina Faso",
+                "value": "BF",
+                "type": "str"
+            },
+            {
+                "label": "Burundi",
+                "value": "BI",
+                "type": "str"
+            },
+            {
+                "label": "Cabo Verde",
+                "value": "CV",
+                "type": "str"
+            },
+            {
+                "label": "Cambodia",
+                "value": "KH",
+                "type": "str"
+            },
+            {
+                "label": "Cameroon",
+                "value": "CM",
+                "type": "str"
+            },
+            {
+                "label": "Canada",
+                "value": "CA",
+                "type": "str"
+            },
+            {
+                "label": "Caribbean Netherlands",
+                "value": "BQ",
+                "type": "str"
+            },
+            {
+                "label": "Cayman Islands",
+                "value": "KY",
+                "type": "str"
+            },
+            {
+                "label": "Central African Republic",
+                "value": "CF",
+                "type": "str"
+            },
+            {
+                "label": "Chad",
+                "value": "TD",
+                "type": "str"
+            },
+            {
+                "label": "Channel Islands",
+                "value": "JE",
+                "type": "str"
+            },
+            {
+                "label": "Chile",
+                "value": "CL",
+                "type": "str"
+            },
+            {
+                "label": "China",
+                "value": "CN",
+                "type": "str"
+            },
+            {
+                "label": "Colombia",
+                "value": "CO",
+                "type": "str"
+            },
+            {
+                "label": "Denmark",
+                "value": "DK",
+                "type": "str"
+            },
+            {
+                "label": "Djibouti",
+                "value": "DJ",
+                "type": "str"
+            },
+            {
+                "label": "Dominica",
+                "value": "DM",
+                "type": "str"
+            },
+            {
+                "label": "Dominican Republic",
+                "value": "DO",
+                "type": "str"
+            },
+            {
+                "label": "Ecuador",
+                "value": "EC",
+                "type": "str"
+            },
+            {
+                "label": "Egypt",
+                "value": "EG",
+                "type": "str"
+            },
+            {
+                "label": "El Salvador",
+                "value": "SV",
+                "type": "str"
+            },
+            {
+                "label": "Equatorial Guinea",
+                "value": "GQ",
+                "type": "str"
+            },
+            {
+                "label": "Eritrea",
+                "value": "ER",
+                "type": "str"
+            },
+            {
+                "label": "Estonia",
+                "value": "EE",
+                "type": "str"
+            },
+            {
+                "label": "Ethiopia",
+                "value": "ET",
+                "type": "str"
+            },
+            {
+                "label": "Falkland Islands",
+                "value": "FK",
+                "type": "str"
+            },
+            {
+                "label": "Faroe Islands",
+                "value": "FO",
+                "type": "str"
+            },
+            {
+                "label": "Fiji",
+                "value": "FJ",
+                "type": "str"
+            },
+            {
+                "label": "Finland",
+                "value": "FI",
+                "type": "str"
+            },
+            {
+                "label": "France",
+                "value": "FR",
+                "type": "str"
+            },
+            {
+                "label": "French Guiana",
+                "value": "GF",
+                "type": "str"
+            },
+            {
+                "label": "French Polynesia",
+                "value": "PF",
+                "type": "str"
+            },
+            {
+                "label": "Gabon",
+                "value": "GA",
+                "type": "str"
+            },
+            {
+                "label": "Gambia",
+                "value": "GM",
+                "type": "str"
+            },
+            {
+                "label": "Georgia",
+                "value": "GE",
+                "type": "str"
+            },
+            {
+                "label": "Germany",
+                "value": "DE",
+                "type": "str"
+            },
+            {
+                "label": "Ghana",
+                "value": "GH",
+                "type": "str"
+            },
+            {
+                "label": "Gibraltar",
+                "value": "GI",
+                "type": "str"
+            },
+            {
+                "label": "Greece",
+                "value": "GR",
+                "type": "str"
+            },
+            {
+                "label": "Greenland",
+                "value": "GL",
+                "type": "str"
+            },
+            {
+                "label": "Grenada",
+                "value": "GD",
+                "type": "str"
+            },
+            {
+                "label": "Guadeloupe",
+                "value": "GP",
+                "type": "str"
+            },
+            {
+                "label": "Guam",
+                "value": "GU",
+                "type": "str"
+            },
+            {
+                "label": "Guatemala",
+                "value": "GT",
+                "type": "str"
+            },
+            {
+                "label": "Guinea",
+                "value": "GN",
+                "type": "str"
+            },
+            {
+                "label": "Guinea-Bissau",
+                "value": "GW",
+                "type": "str"
+            },
+            {
+                "label": "Guyana",
+                "value": "GY",
+                "type": "str"
+            },
+            {
+                "label": "Haiti",
+                "value": "HT",
+                "type": "str"
+            },
+            {
+                "label": "Honduras",
+                "value": "HN",
+                "type": "str"
+            },
+            {
+                "label": "Hong Kong",
+                "value": "HK",
+                "type": "str"
+            },
+            {
+                "label": "Hungary",
+                "value": "HU",
+                "type": "str"
+            },
+            {
+                "label": "Iceland",
+                "value": "IS",
+                "type": "str"
+            },
+            {
+                "label": "India",
+                "value": "IN",
+                "type": "str"
+            },
+            {
+                "label": "Indonesia",
+                "value": "ID",
+                "type": "str"
+            },
+            {
+                "label": "Iran",
+                "value": "IR",
+                "type": "str"
+            },
+            {
+                "label": "Iraq",
+                "value": "IQ",
+                "type": "str"
+            },
+            {
+                "label": "Ireland",
+                "value": "IE",
+                "type": "str"
+            },
+            {
+                "label": "Isle of Man",
+                "value": "IM",
+                "type": "str"
+            },
+            {
+                "label": "Israel",
+                "value": "IL",
+                "type": "str"
+            },
+            {
+                "label": "Italy",
+                "value": "IT",
+                "type": "str"
+            },
+            {
+                "label": "Jamaica",
+                "value": "JM",
+                "type": "str"
+            },
+            {
+                "label": "Japan",
+                "value": "JP",
+                "type": "str"
+            },
+            {
+                "label": "Jordan",
+                "value": "JO",
+                "type": "str"
+            },
+            {
+                "label": "Kazakhstan",
+                "value": "KZ",
+                "type": "str"
+            },
+            {
+                "label": "Kenya",
+                "value": "KE",
+                "type": "str"
+            },
+            {
+                "label": "Kiribati",
+                "value": "KI",
+                "type": "str"
+            },
+            {
+                "label": "Kuwait",
+                "value": "KW",
+                "type": "str"
+            },
+            {
+                "label": "Kyrgyzstan",
+                "value": "KG",
+                "type": "str"
+            },
+            {
+                "label": "Laos",
+                "value": "LA",
+                "type": "str"
+            },
+            {
+                "label": "Latvia",
+                "value": "LV",
+                "type": "str"
+            },
+            {
+                "label": "Lebanon",
+                "value": "LB",
+                "type": "str"
+            },
+            {
+                "label": "Lesotho",
+                "value": "LS",
+                "type": "str"
+            },
+            {
+                "label": "Liberia",
+                "value": "LR",
+                "type": "str"
+            },
+            {
+                "label": "Libya",
+                "value": "LY",
+                "type": "str"
+            },
+            {
+                "label": "Liechtenstein",
+                "value": "LI",
+                "type": "str"
+            },
+            {
+                "label": "Lithuania",
+                "value": "LT",
+                "type": "str"
+            },
+            {
+                "label": "Luxembourg",
+                "value": "LU",
+                "type": "str"
+            },
+            {
+                "label": "Macao",
+                "value": "MO",
+                "type": "str"
+            },
+            {
+                "label": "Madagascar",
+                "value": "MG",
+                "type": "str"
+            },
+            {
+                "label": "Malawi",
+                "value": "MW",
+                "type": "str"
+            },
+            {
+                "label": "Malaysia",
+                "value": "MY",
+                "type": "str"
+            },
+            {
+                "label": "Maldives",
+                "value": "MV",
+                "type": "str"
+            },
+            {
+                "label": "Mali",
+                "value": "ML",
+                "type": "str"
+            },
+            {
+                "label": "Malta",
+                "value": "MT",
+                "type": "str"
+            },
+            {
+                "label": "Marshall Islands",
+                "value": "MH",
+                "type": "str"
+            },
+            {
+                "label": "Martinique",
+                "value": "MQ",
+                "type": "str"
+            },
+            {
+                "label": "Mauritania",
+                "value": "MR",
+                "type": "str"
+            },
+            {
+                "label": "Mauritius",
+                "value": "MU",
+                "type": "str"
+            },
+            {
+                "label": "Mayotte",
+                "value": "YT",
+                "type": "str"
+            },
+            {
+                "label": "Mexico",
+                "value": "MX",
+                "type": "str"
+            },
+            {
+                "label": "Micronesia",
+                "value": "FM",
+                "type": "str"
+            },
+            {
+                "label": "Moldova",
+                "value": "MD",
+                "type": "str"
+            },
+            {
+                "label": "Monaco",
+                "value": "MC",
+                "type": "str"
+            },
+            {
+                "label": "Mongolia",
+                "value": "MN",
+                "type": "str"
+            },
+            {
+                "label": "Montenegro",
+                "value": "ME",
+                "type": "str"
+            },
+            {
+                "label": "Montserrat",
+                "value": "MS",
+                "type": "str"
+            },
+            {
+                "label": "Morocco",
+                "value": "MA",
+                "type": "str"
+            },
+            {
+                "label": "Mozambique",
+                "value": "MZ",
+                "type": "str"
+            },
+            {
+                "label": "Myanmar",
+                "value": "MM",
+                "type": "str"
+            },
+            {
+                "label": "Namibia",
+                "value": "NA",
+                "type": "str"
+            },
+            {
+                "label": "Nauru",
+                "value": "NR",
+                "type": "str"
+            },
+            {
+                "label": "Nepal",
+                "value": "NP",
+                "type": "str"
+            },
+            {
+                "label": "Netherlands",
+                "value": "NL",
+                "type": "str"
+            },
+            {
+                "label": "New Caledonia",
+                "value": "NC",
+                "type": "str"
+            },
+            {
+                "label": "New Zealand",
+                "value": "NZ",
+                "type": "str"
+            },
+            {
+                "label": "Nicaragua",
+                "value": "NI",
+                "type": "str"
+            },
+            {
+                "label": "Niger",
+                "value": "NE",
+                "type": "str"
+            },
+            {
+                "label": "Nigeria",
+                "value": "NG",
+                "type": "str"
+            },
+            {
+                "label": "Niue",
+                "value": "NU",
+                "type": "str"
+            },
+            {
+                "label": "North Macedonia",
+                "value": "MK",
+                "type": "str"
+            },
+            {
+                "label": "Northern Mariana Islands",
+                "value": "MP",
+                "type": "str"
+            },
+            {
+                "label": "Norway",
+                "value": "NO",
+                "type": "str"
+            },
+            {
+                "label": "Oman",
+                "value": "OM",
+                "type": "str"
+            },
+            {
+                "label": "Pakistan",
+                "value": "PK",
+                "type": "str"
+            },
+            {
+                "label": "Palau",
+                "value": "PW",
+                "type": "str"
+            },
+            {
+                "label": "Palestine",
+                "value": "PS",
+                "type": "str"
+            },
+            {
+                "label": "Panama",
+                "value": "PA",
+                "type": "str"
+            },
+            {
+                "label": "Papua New Guinea",
+                "value": "PG",
+                "type": "str"
+            },
+            {
+                "label": "Paraguay",
+                "value": "PY",
+                "type": "str"
+            },
+            {
+                "label": "Peru",
+                "value": "PE",
+                "type": "str"
+            },
+            {
+                "label": "Philippines",
+                "value": "PH",
+                "type": "str"
+            },
+            {
+                "label": "Pitcairn Islands",
+                "value": "PN",
+                "type": "str"
+            },
+            {
+                "label": "Poland",
+                "value": "PL",
+                "type": "str"
+            },
+            {
+                "label": "Portugal",
+                "value": "PT",
+                "type": "str"
+            },
+            {
+                "label": "Puerto Rico",
+                "value": "PR",
+                "type": "str"
+            },
+            {
+                "label": "Qatar",
+                "value": "QA",
+                "type": "str"
+            },
+            {
+                "label": "Réunion",
+                "value": "RE",
+                "type": "str"
+            },
+            {
+                "label": "Romania",
+                "value": "RO",
+                "type": "str"
+            },
+            {
+                "label": "Russia",
+                "value": "RU",
+                "type": "str"
+            },
+            {
+                "label": "Rwanda",
+                "value": "RW",
+                "type": "str"
+            },
+            {
+                "label": "Slovakia",
+                "value": "SK",
+                "type": "str"
+            },
+            {
+                "label": "Slovenia",
+                "value": "SI",
+                "type": "str"
+            },
+            {
+                "label": "Solomon Islands",
+                "value": "SB",
+                "type": "str"
+            },
+            {
+                "label": "Somalia",
+                "value": "SO",
+                "type": "str"
+            },
+            {
+                "label": "South Africa",
+                "value": "ZA",
+                "type": "str"
+            },
+            {
+                "label": "South Sudan",
+                "value": "SS",
+                "type": "str"
+            },
+            {
+                "label": "Spain",
+                "value": "ES",
+                "type": "str"
+            },
+            {
+                "label": "Sri Lanka",
+                "value": "LK",
+                "type": "str"
+            },
+            {
+                "label": "St. Barth",
+                "value": "BL",
+                "type": "str"
+            },
+            {
+                "label": "Sudan",
+                "value": "SD",
+                "type": "str"
+            },
+            {
+                "label": "Suriname",
+                "value": "SR",
+                "type": "str"
+            },
+            {
+                "label": "Swaziland",
+                "value": "SZ",
+                "type": "str"
+            },
+            {
+                "label": "Sweden",
+                "value": "SE",
+                "type": "str"
+            },
+            {
+                "label": "Switzerland",
+                "value": "CH",
+                "type": "str"
+            },
+            {
+                "label": "Syrian Arab Republic",
+                "value": "SY",
+                "type": "str"
+            },
+            {
+                "label": "Taiwan",
+                "value": "TW",
+                "type": "str"
+            },
+            {
+                "label": "Tajikistan",
+                "value": "TJ",
+                "type": "str"
+            },
+            {
+                "label": "Tanzania",
+                "value": "TZ",
+                "type": "str"
+            },
+            {
+                "label": "Thailand",
+                "value": "TH",
+                "type": "str"
+            },
+            {
+                "label": "Timor-Leste",
+                "value": "TL",
+                "type": "str"
+            },
+            {
+                "label": "Togo",
+                "value": "TG",
+                "type": "str"
+            },
+            {
+                "label": "Tokelau",
+                "value": "TK",
+                "type": "str"
+            },
+            {
+                "label": "Tonga",
+                "value": "TO",
+                "type": "str"
+            },
+            {
+                "label": "Trinidad and Tobago",
+                "value": "TT",
+                "type": "str"
+            },
+            {
+                "label": "Tunisia",
+                "value": "TN",
+                "type": "str"
+            },
+            {
+                "label": "Turkey",
+                "value": "TR",
+                "type": "str"
+            },
+            {
+                "label": "Turks and Caicos Islands",
+                "value": "TC",
+                "type": "str"
+            },
+            {
+                "label": "Tuvalu",
+                "value": "TV",
+                "type": "str"
+            },
+            {
+                "label": "UAE",
+                "value": "AE",
+                "type": "str"
+            },
+            {
+                "label": "UK",
+                "value": "GB",
+                "type": "str"
+            },
+            {
+                "label": "USA",
+                "value": "US",
+                "type": "str"
+            },
+            {
+                "label": "Uganda",
+                "value": "UG",
+                "type": "str"
+            },
+            {
+                "label": "Ukraine",
+                "value": "UA",
+                "type": "str"
+            },
+            {
+                "label": "Uruguay",
+                "value": "UY",
+                "type": "str"
+            },
+            {
+                "label": "Uzbekistan",
+                "value": "UZ",
+                "type": "str"
+            },
+            {
+                "label": "Vanuatu",
+                "value": "VU",
+                "type": "str"
+            },
+            {
+                "label": "Venezuela",
+                "value": "VE",
+                "type": "str"
+            },
+            {
+                "label": "Vietnam",
+                "value": "VN",
+                "type": "str"
+            },
+            {
+                "label": "Wallis and Futuna",
+                "value": "WF",
+                "type": "str"
+            },
+            {
+                "label": "Western Sahara",
+                "value": "EH",
+                "type": "str"
+            },
+            {
+                "label": "Yemen",
+                "value": "YE",
+                "type": "str"
+            },
+            {
+                "label": "Zambia",
+                "value": "ZM",
+                "type": "str"
+            },
+            {
+                "label": "Zimbabwe",
+                "value": "ZW",
+                "type": "str"
+            }
+        ],
+        "payload": "",
+        "topic": "country_iso2",
+        "topicType": "str",
+        "className": "",
+        "x": 220,
+        "y": 460,
+        "wires": [
+            [
+                "22fc15bfe3605aef",
+                "48de6e6f48e9e1f3"
+            ]
+        ]
+    },
+    {
+        "id": "47b853535101cd15",
+        "type": "http request",
+        "z": "dcb11d42f41b6ef5",
+        "name": "獲取疫苗數據",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "https://disease.sh/v3/covid-19/vaccine/coverage/countries?lastdays=1",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 640,
+        "y": 360,
+        "wires": [
+            [
+                "8b7305c887409a22"
+            ]
+        ]
+    },
+    {
+        "id": "2019c08594f7c4c7",
+        "type": "http request",
+        "z": "dcb11d42f41b6ef5",
+        "name": "獲取疫苗接種數據",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 770,
+        "y": 680,
+        "wires": [
+            [
+                "f2e2be22ffb5315e"
+            ]
+        ]
+    },
+    {
+        "id": "85a08609d8dae743",
+        "type": "ui_text",
+        "z": "dcb11d42f41b6ef5",
+        "group": "56d8a319d421ef23",
+        "order": 1,
+        "width": 12,
+        "height": 2,
+        "name": "疫苗接種數",
+        "label": "疫苗接種數 ({{msg.country}})",
+        "format": "{{msg.payload}}",
+        "layout": "row-center",
+        "className": "vaccinated-text",
+        "style": true,
+        "font": "Arial,Arial,Helvetica,sans-serif",
+        "fontSize": "20",
+        "color": "#000000",
+        "x": 1270,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "be4d4296ca8b40e6",
+        "type": "ui_gauge",
+        "z": "dcb11d42f41b6ef5",
+        "name": "",
+        "group": "d2d75e8428895025",
+        "order": 4,
+        "width": 6,
+        "height": 6,
+        "gtype": "gage",
+        "title": "活躍病例率",
+        "label": "%",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 1330,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "855658165184140d",
+        "type": "ui_gauge",
+        "z": "dcb11d42f41b6ef5",
+        "name": "",
+        "group": "5781e3dc3d91229c",
+        "order": 4,
+        "width": 6,
+        "height": 6,
+        "gtype": "gage",
+        "title": "活躍病例率",
+        "label": "%",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 1270,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "7d77d59b26783309",
+        "type": "inject",
+        "z": "dcb11d42f41b6ef5",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "3600",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "0.1",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 240,
+        "y": 100,
+        "wires": [
+            [
+                "6ff4fa008b86fd46",
+                "22fc15bfe3605aef",
+                "9b16b502c85bb102",
+                "47b853535101cd15",
+                "48de6e6f48e9e1f3"
+            ]
+        ]
+    },
+    {
+        "id": "edf97a88f9b4dbcd",
+        "type": "function",
+        "z": "dcb11d42f41b6ef5",
+        "name": "計算評分",
+        "func": "// 從輸入獲取活躍病例率\nconst activeRate = parseFloat(msg.payload) || 0;\n\n// 根據活躍病例率範圍計算評分\nlet score = 0;\nlet riskLevel = '';\n\n// 評分表：根據活躍病例率的不同範圍給予不同分數\nif (activeRate <= 1) {\n    score = 10;\n    riskLevel = '極低風險';\n} else if (activeRate <= 5) {\n    score = 9;\n    riskLevel = '非常低風險';\n} else if (activeRate <= 10) {\n    score = 8;\n    riskLevel = '低風險';\n} else if (activeRate <= 20) {\n    score = 7;\n    riskLevel = '較低風險';\n} else if (activeRate <= 30) {\n    score = 6;\n    riskLevel = '中低風險';\n} else if (activeRate <= 40) {\n    score = 5;\n    riskLevel = '中等風險';\n} else if (activeRate <= 50) {\n    score = 4;\n    riskLevel = '中高風險';\n} else if (activeRate <= 60) {\n    score = 3;\n    riskLevel = '高風險';\n} else if (activeRate <= 70) {\n    score = 2;\n    riskLevel = '很高風險';\n} else if (activeRate <= 80) {\n    score = 1;\n    riskLevel = '極高風險';\n} else {\n    score = 0;\n    riskLevel = '危險級別';\n}\n\n// 創建donut圖的消息\nconst donutMsg = {\n    payload:(score),\n    topic: `疫情風險評分: ${score}分 (${riskLevel})`,\n    // 添加其他元數據以便在工具提示或UI中使用\n    score: score,\n    riskLevel: riskLevel,\n    activeRate: activeRate\n};\n\nreturn donutMsg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1260,
+        "y": 580,
+        "wires": [
+            [
+                "76b28db876e65bf9",
+                "5b96d2fc3217b59f"
+            ]
+        ]
+    },
+    {
+        "id": "76b28db876e65bf9",
+        "type": "ui_gauge",
+        "z": "dcb11d42f41b6ef5",
+        "name": "",
+        "group": "5781e3dc3d91229c",
+        "order": 5,
+        "width": 6,
+        "height": 6,
+        "gtype": "donut",
+        "title": "評分",
+        "label": "score",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "10",
+        "colors": [
+            "#ca3838",
+            "#e6e600",
+            "#00b500"
+        ],
+        "seg1": "3",
+        "seg2": "7",
+        "diff": false,
+        "className": "",
+        "x": 1430,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "5b96d2fc3217b59f",
+        "type": "ui_template",
+        "z": "dcb11d42f41b6ef5",
+        "group": "5781e3dc3d91229c",
+        "name": "",
+        "order": 6,
+        "width": 12,
+        "height": 3,
+        "format": "<div style=\"font-family: Arial, sans-serif; max-width: 100%; margin-top: 10px;\">\n    <div ng-if=\"msg.score == 10 || msg.payload == 10\"\n        style=\"background-color: #e8f5e9; border-left: 5px solid #4caf50; padding: 10px; border-radius: 4px;\">\n        <h4 style=\"margin: 0; color: #2e7d32;\">極低風險 (10分)</h4>\n        <p style=\"margin: 5px 0 0;\">活躍病例率低於1%，疫情已基本受控。正常生活、保持基本衛生習慣。</p>\n    </div>\n\n    <div ng-if=\"msg.score == 9 || msg.payload == 9\"\n        style=\"background-color: #e8f5e9; border-left: 5px solid #4caf50; padding: 10px; border-radius: 4px;\">\n        <h4 style=\"margin: 0; color: #2e7d32;\">非常低風險 (9分)</h4>\n        <p style=\"margin: 5px 0 0;\">活躍病例率1-5%，疫情風險較小。建議在擁擠場所佩戴口罩，注意個人衛生。</p>\n    </div>\n\n    <div ng-if=\"msg.score == 8 || msg.payload == 8\"\n        style=\"background-color: #e8f5e9; border-left: 5px solid #4caf50; padding: 10px; border-radius: 4px;\">\n        <h4 style=\"margin: 0; color: #2e7d32;\">低風險 (8分)</h4>\n        <p style=\"margin: 5px 0 0;\">活躍病例率6-10%，疫情輕微。避免長時間停留在通風不良的公共場所，保持社交距離。</p>\n    </div>\n\n    <div ng-if=\"msg.score == 7 || msg.payload == 7\"\n        style=\"background-color: #f0f4c3; border-left: 5px solid #cddc39; padding: 10px; border-radius: 4px;\">\n        <h4 style=\"margin: 0; color: #827717;\">較低風險 (7分)</h4>\n        <p style=\"margin: 5px 0 0;\">活躍病例率11-20%，需要謹慎。外出時佩戴口罩，減少不必要的集會活動。</p>\n    </div>\n\n    <div ng-if=\"msg.score == 6 || msg.payload == 6\"\n        style=\"background-color: #fff9c4; border-left: 5px solid #ffeb3b; padding: 10px; border-radius: 4px;\">\n        <h4 style=\"margin: 0; color: #f57f17;\">中低風險 (6分)</h4>\n        <p style=\"margin: 5px 0 0;\">活躍病例率21-30%，風險逐漸增加。避免不必要外出，加強個人防護。</p>\n    </div>\n\n    <div ng-if=\"msg.score == 5 || msg.payload == 5\"\n        style=\"background-color: #fff9c4; border-left: 5px solid #ffeb3b; padding: 10px; border-radius: 4px;\">\n        <h4 style=\"margin: 0; color: #f57f17;\">中等風險 (5分)</h4>\n        <p style=\"margin: 5px 0 0;\">活躍病例率31-40%，風險中等。減少外出，避免聚集，考慮遠程工作。</p>\n    </div>\n\n    <div ng-if=\"msg.score == 4 || msg.payload == 4\"\n        style=\"background-color: #ffe0b2; border-left: 5px solid #ff9800; padding: 10px; border-radius: 4px;\">\n        <h4 style=\"margin: 0; color: #e65100;\">中高風險 (4分)</h4>\n        <p style=\"margin: 5px 0 0;\">活躍病例率41-50%，風險較高。僅必要外出，嚴格遵守防疫措施，考慮加強疫苗接種。</p>\n    </div>\n\n    <div ng-if=\"msg.score == 3 || msg.payload == 3\"\n        style=\"background-color: #ffccbc; border-left: 5px solid #ff5722; padding: 10px; border-radius: 4px;\">\n        <h4 style=\"margin: 0; color: #bf360c;\">高風險 (3分)</h4>\n        <p style=\"margin: 5px 0 0;\">活躍病例率51-60%，高度警惕。非必要不外出，採取嚴格的個人防護措施。</p>\n    </div>\n\n    <div ng-if=\"msg.score == 2 || msg.payload == 2\"\n        style=\"background-color: #ffccbc; border-left: 5px solid #ff5722; padding: 10px; border-radius: 4px;\">\n        <h4 style=\"margin: 0; color: #bf360c;\">很高風險 (2分)</h4>\n        <p style=\"margin: 5px 0 0;\">活躍病例率61-70%，風險極高。建議居家隔離，遵從當地衛生部門指引。</p>\n    </div>\n\n    <div ng-if=\"msg.score == 1 || msg.payload == 1\"\n        style=\"background-color: #ffcdd2; border-left: 5px solid #f44336; padding: 10px; border-radius: 4px;\">\n        <h4 style=\"margin: 0; color: #b71c1c;\">極高風險 (1分)</h4>\n        <p style=\"margin: 5px 0 0;\">活躍病例率71-80%，疫情嚴峻。嚴格居家隔離，只在緊急情況下外出，保持社區警惕。</p>\n    </div>\n\n    <div ng-if=\"msg.score == 0 || msg.payload == 0\"\n        style=\"background-color: #ffcdd2; border-left: 5px solid #f44336; padding: 10px; border-radius: 4px;\">\n        <h4 style=\"margin: 0; color: #b71c1c;\">危險級別 (0分)</h4>\n        <p style=\"margin: 5px 0 0;\">活躍病例率超過80%，疫情失控。嚴格遵守當地封鎖措施，避免一切非生命必要的外出。</p>\n    </div>\n</div>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 1440,
+        "y": 620,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "52c71ad94aecdd32",
+        "type": "function",
+        "z": "dcb11d42f41b6ef5",
+        "name": "計算評分",
+        "func": "// 從輸入獲取活躍病例率\nconst activeRate = parseFloat(msg.payload) || 0;\n\n// 根據活躍病例率範圍計算評分\nlet score = 0;\nlet riskLevel = '';\n\n// 評分表：根據活躍病例率的不同範圍給予不同分數\nif (activeRate <= 1) {\n    score = 10;\n    riskLevel = '極低風險';\n} else if (activeRate <= 5) {\n    score = 9;\n    riskLevel = '非常低風險';\n} else if (activeRate <= 10) {\n    score = 8;\n    riskLevel = '低風險';\n} else if (activeRate <= 20) {\n    score = 7;\n    riskLevel = '較低風險';\n} else if (activeRate <= 30) {\n    score = 6;\n    riskLevel = '中低風險';\n} else if (activeRate <= 40) {\n    score = 5;\n    riskLevel = '中等風險';\n} else if (activeRate <= 50) {\n    score = 4;\n    riskLevel = '中高風險';\n} else if (activeRate <= 60) {\n    score = 3;\n    riskLevel = '高風險';\n} else if (activeRate <= 70) {\n    score = 2;\n    riskLevel = '很高風險';\n} else if (activeRate <= 80) {\n    score = 1;\n    riskLevel = '極高風險';\n} else {\n    score = 0;\n    riskLevel = '危險級別';\n}\n\n// 創建donut圖的消息\nconst donutMsg = {\n    payload:(score),\n    topic: `疫情風險評分: ${score}分 (${riskLevel})`,\n    // 添加其他元數據以便在工具提示或UI中使用\n    score: score,\n    riskLevel: riskLevel,\n    activeRate: activeRate\n};\n\nreturn donutMsg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1320,
+        "y": 220,
+        "wires": [
+            [
+                "d9a85b01d73ffde7",
+                "254341140031700b"
+            ]
+        ]
+    },
+    {
+        "id": "d9a85b01d73ffde7",
+        "type": "ui_gauge",
+        "z": "dcb11d42f41b6ef5",
+        "name": "",
+        "group": "d2d75e8428895025",
+        "order": 5,
+        "width": 6,
+        "height": 6,
+        "gtype": "donut",
+        "title": "評分",
+        "label": "score",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "10",
+        "colors": [
+            "#ca3838",
+            "#e6e600",
+            "#00b500"
+        ],
+        "seg1": "3",
+        "seg2": "6",
+        "diff": false,
+        "className": "",
+        "x": 1490,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "254341140031700b",
+        "type": "ui_template",
+        "z": "dcb11d42f41b6ef5",
+        "group": "d2d75e8428895025",
+        "name": "",
+        "order": 6,
+        "width": 12,
+        "height": 3,
+        "format": "<div style=\"font-family: Arial, sans-serif; max-width: 100%; margin-top: 10px;\">\n    <div ng-if=\"msg.score == 10 || msg.payload == 10\"\n        style=\"background-color: #e8f5e9; border-left: 5px solid #4caf50; padding: 10px; border-radius: 4px;\">\n        <h4 style=\"margin: 0; color: #2e7d32;\">極低風險 (10分)</h4>\n        <p style=\"margin: 5px 0 0;\">活躍病例率低於1%，疫情已基本受控。正常生活，保持基本衛生習慣。</p>\n    </div>\n\n    <div ng-if=\"msg.score == 9 || msg.payload == 9\"\n        style=\"background-color: #e8f5e9; border-left: 5px solid #4caf50; padding: 10px; border-radius: 4px;\">\n        <h4 style=\"margin: 0; color: #2e7d32;\">非常低風險 (9分)</h4>\n        <p style=\"margin: 5px 0 0;\">活躍病例率1-5%，疫情風險較小。建議在擁擠場所佩戴口罩，注意個人衛生。</p>\n    </div>\n\n    <div ng-if=\"msg.score == 8 || msg.payload == 8\"\n        style=\"background-color: #e8f5e9; border-left: 5px solid #4caf50; padding: 10px; border-radius: 4px;\">\n        <h4 style=\"margin: 0; color: #2e7d32;\">低風險 (8分)</h4>\n        <p style=\"margin: 5px 0 0;\">活躍病例率6-10%，疫情輕微。避免長時間停留在通風不良的公共場所，保持社交距離。</p>\n    </div>\n\n    <div ng-if=\"msg.score == 7 || msg.payload == 7\"\n        style=\"background-color: #f0f4c3; border-left: 5px solid #cddc39; padding: 10px; border-radius: 4px;\">\n        <h4 style=\"margin: 0; color: #827717;\">較低風險 (7分)</h4>\n        <p style=\"margin: 5px 0 0;\">活躍病例率11-20%，需要謹慎。外出時佩戴口罩，減少不必要的集會活動。</p>\n    </div>\n\n    <div ng-if=\"msg.score == 6 || msg.payload == 6\"\n        style=\"background-color: #fff9c4; border-left: 5px solid #ffeb3b; padding: 10px; border-radius: 4px;\">\n        <h4 style=\"margin: 0; color: #f57f17;\">中低風險 (6分)</h4>\n        <p style=\"margin: 5px 0 0;\">活躍病例率21-30%，風險逐漸增加。避免不必要外出，加強個人防護。</p>\n    </div>\n\n    <div ng-if=\"msg.score == 5 || msg.payload == 5\"\n        style=\"background-color: #fff9c4; border-left: 5px solid #ffeb3b; padding: 10px; border-radius: 4px;\">\n        <h4 style=\"margin: 0; color: #f57f17;\">中等風險 (5分)</h4>\n        <p style=\"margin: 5px 0 0;\">活躍病例率31-40%，風險中等。減少外出，避免聚集，考慮遠程工作。</p>\n    </div>\n\n    <div ng-if=\"msg.score == 4 || msg.payload == 4\"\n        style=\"background-color: #ffe0b2; border-left: 5px solid #ff9800; padding: 10px; border-radius: 4px;\">\n        <h4 style=\"margin: 0; color: #e65100;\">中高風險 (4分)</h4>\n        <p style=\"margin: 5px 0 0;\">活躍病例率41-50%，風險較高。僅必要外出，嚴格遵守防疫措施，考慮加強疫苗接種。</p>\n    </div>\n\n    <div ng-if=\"msg.score == 3 || msg.payload == 3\"\n        style=\"background-color: #ffccbc; border-left: 5px solid #ff5722; padding: 10px; border-radius: 4px;\">\n        <h4 style=\"margin: 0; color: #bf360c;\">高風險 (3分)</h4>\n        <p style=\"margin: 5px 0 0;\">活躍病例率51-60%，高度警惕。非必要不外出，採取嚴格的個人防護措施。</p>\n    </div>\n\n    <div ng-if=\"msg.score == 2 || msg.payload == 2\"\n        style=\"background-color: #ffccbc; border-left: 5px solid #ff5722; padding: 10px; border-radius: 4px;\">\n        <h4 style=\"margin: 0; color: #bf360c;\">很高風險 (2分)</h4>\n        <p style=\"margin: 5px 0 0;\">活躍病例率61-70%，風險極高。建議居家隔離，遵從當地衛生部門指引。</p>\n    </div>\n\n    <div ng-if=\"msg.score == 1 || msg.payload == 1\"\n        style=\"background-color: #ffcdd2; border-left: 5px solid #f44336; padding: 10px; border-radius: 4px;\">\n        <h4 style=\"margin: 0; color: #b71c1c;\">極高風險 (1分)</h4>\n        <p style=\"margin: 5px 0 0;\">活躍病例率71-80%，疫情嚴峻。嚴格居家隔離，只在緊急情況下外出，保持社區警惕。</p>\n    </div>\n\n    <div ng-if=\"msg.score == 0 || msg.payload == 0\"\n        style=\"background-color: #ffcdd2; border-left: 5px solid #f44336; padding: 10px; border-radius: 4px;\">\n        <h4 style=\"margin: 0; color: #b71c1c;\">危險級別 (0分)</h4>\n        <p style=\"margin: 5px 0 0;\">活躍病例率超過80%，疫情失控。嚴格遵守當地封鎖措施，避免一切非生命必要的外出。</p>\n    </div>\n</div>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 1500,
+        "y": 260,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f2e2be22ffb5315e",
+        "type": "function",
+        "z": "dcb11d42f41b6ef5",
+        "name": "function 2",
+        "func": "// 從 API 返回的數據中提取接種人數和國家名稱\nconst country = msg.payload.country || \"未知國家\";\nconst timeline = msg.payload.timeline || {};\n\n// 獲取 timeline 中的最新日期的數據\nlet latestDate;\nlet vaccinated = 0;\n\nif (timeline && Object.keys(timeline).length > 0) {\n    // 正確處理日期排序\n    const dates = Object.keys(timeline);\n    latestDate = dates[0]; // 獲取排序後的第一個日期（最新）\n    vaccinated = timeline[latestDate] || 0;\n}\n\n// 格式化數字，修正正則表達式中的轉義問題\nfunction formatNumber(num) {\n    return num.toString().replace(/\\B(?=(\\d{3})+(?!\\d))/g, \",\");\n}\n\n// 設置 msg.payload 為格式化後的接種人數\nmsg.payload = formatNumber(vaccinated);\n\n// 添加國家信息到 msg 對象\nmsg.country = country;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1060,
+        "y": 740,
+        "wires": [
+            [
+                "85a08609d8dae743"
+            ]
+        ]
+    },
+    {
+        "id": "48de6e6f48e9e1f3",
+        "type": "function",
+        "z": "dcb11d42f41b6ef5",
+        "name": "function 3",
+        "func": "// 從下拉選單獲取選中的值\nvar country = msg.payload;\n// 構建 URL\nmsg.url = `https://disease.sh/v3/covid-19/vaccine/coverage/countries/${country}?lastdays=1`;\n// 設置 HTTP 方法\nmsg.method = \"GET\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 540,
+        "y": 680,
+        "wires": [
+            [
+                "2019c08594f7c4c7"
+            ]
+        ]
+    },
+    {
+        "id": "768a70454fc4dbb1",
+        "type": "http request",
+        "z": "dcb11d42f41b6ef5",
+        "name": "獲取全球疫苗接種數據",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "https://disease.sh/v3/covid-19/vaccine/coverage/countries?lastdays=730",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 740,
+        "y": 840,
+        "wires": [
+            [
+                "449403235c39c3e1"
+            ]
+        ]
+    },
+    {
+        "id": "449403235c39c3e1",
+        "type": "function",
+        "z": "dcb11d42f41b6ef5",
+        "name": "處理疫苗接種趨勢數據",
+        "func": "// 從API獲取數據\nconst countriesData = msg.payload || [];\n\n// 篩選出有完整數據的國家\nconst validCountries = countriesData.filter(item => {\n    return item && item.timeline && Object.keys(item.timeline).length > 0;\n});\n\n\n// 獲取所有日期（從第一個國家的timeline獲取）\nlet allDates = [];\nif (validCountries.length > 0) {\n    allDates = Object.keys(validCountries[0].timeline).sort((a, b) => {\n        return new Date(a).getTime() - new Date(b).getTime();\n    });\n}\n\n// 計算每個國家的增長率並排序\nconst countriesWithGrowth = validCountries.map(country => {\n    const timeline = country.timeline;\n\n    // 獲取第一個和最後一個日期的數據\n    const firstDate = allDates[0];\n    const lastDate = allDates[allDates.length - 1];\n\n    const firstValue = timeline[firstDate] || 0;\n    const lastValue = timeline[lastDate] || 0;\n\n    // 計算增長率\n    let growthRate = 0;\n    if (firstValue > 0) {\n        growthRate = ((lastValue - firstValue) / firstValue) * 100;\n    }\n\n    return {\n        country: country.country,\n        growthRate: growthRate,\n        firstValue: firstValue,\n        lastValue: lastValue,\n        timeline: timeline\n    };\n}).filter(item => {\n    // 過濾掉沒有顯著變化的國家\n    return item.firstValue > 0;\n}).sort((a, b) => {\n    // 按增長率排序（降序）\n    return b.growthRate - a.growthRate;\n});\n\n// 為所有國家創建增長率數據\nlet allCountriesGrowthRates = countriesWithGrowth.map(country => {\n    return {\n        country: country.country,\n        growthRate: country.growthRate.toFixed(2),\n        startValue: (country.firstValue / 1000000).toFixed(2),\n        endValue: (country.lastValue / 1000000).toFixed(2)\n    };\n});\n\n// 計算全球平均增長率\nconst averageGrowthRate = countriesWithGrowth.reduce((sum, country) => {\n    return sum + country.growthRate;\n}, 0) / countriesWithGrowth.length;\n\n// 準備增長率顯示\nconst growthRateMsg = {\n    payload: `全球平均增長率: ${averageGrowthRate.toFixed(2)}%`,\n    growthRates: allCountriesGrowthRates, // 包含所有國家的數據\n    totalCountries: allCountriesGrowthRates.length,\n    lastUpdate: new Date().toLocaleString()\n};\n\n// 返回圖表數據和增長率信息\nreturn [growthRateMsg];",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1020,
+        "y": 840,
+        "wires": [
+            [
+                "22a85071d2de194c",
+                "bcb744bd19c9a51f"
+            ]
+        ]
+    },
+    {
+        "id": "fe092fdec599bcc0",
+        "type": "inject",
+        "z": "dcb11d42f41b6ef5",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "3600",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "1",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 320,
+        "y": 840,
+        "wires": [
+            [
+                "768a70454fc4dbb1"
+            ]
+        ]
+    },
+    {
+        "id": "22a85071d2de194c",
+        "type": "ui_text",
+        "z": "dcb11d42f41b6ef5",
+        "group": "56d8a319d421ef23",
+        "order": 2,
+        "width": 12,
+        "height": 1,
+        "name": "全球疫苗接種增長率",
+        "label": "",
+        "format": "{{msg.payload}}",
+        "layout": "row-center",
+        "className": "",
+        "style": true,
+        "font": "Arial,Arial,Helvetica,sans-serif",
+        "fontSize": "20",
+        "color": "#000000",
+        "x": 1420,
+        "y": 840,
+        "wires": []
+    },
+    {
+        "id": "bcb744bd19c9a51f",
+        "type": "ui_template",
+        "z": "dcb11d42f41b6ef5",
+        "group": "56d8a319d421ef23",
+        "name": "國家增長率詳情",
+        "order": 3,
+        "width": 12,
+        "height": 20,
+        "format": "<div style=\"font-family: Arial, sans-serif; padding: 15px;\">\n    <h3 style=\"color: #2c3e50; margin-bottom: 15px; border-bottom: 2px solid #3498db; padding-bottom: 10px;\">\n        全球疫苗接種增長率 - 共計 {{msg.totalCountries}} 個國家\n    </h3>\n\n    <div\n        style=\"margin-bottom: 15px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; align-items: center;\">\n        <div>\n            <input type=\"text\" placeholder=\"搜尋國家...\"\n                   ng-model=\"searchCountry\"\n                   style=\"padding: 8px; border-radius: 4px; border: 1px solid #ddd; width: 200px;\">\n        </div>\n        <div>\n            <select ng-model=\"sortOption\" style=\"padding: 8px; border-radius: 4px; border: 1px solid #ddd;\">\n                <option value=\"growthDesc\">增長率 (高 → 低)</option>\n                <option value=\"growthAsc\">增長率 (低 → 高)</option>\n                <option value=\"country\">國家名稱</option>\n                <option value=\"endValueDesc\">當前接種量 (高 → 低)</option>\n                <option value=\"endValueAsc\">當前接種量 (低 → 高)</option>\n            </select>\n        </div>\n    </div>\n\n    <!-- 分頁控制 -->\n    <div style=\"margin-bottom: 15px; display: flex; justify-content: center; align-items: center;\">\n        <button ng-click=\"prevPage()\" ng-disabled=\"currentPage === 1\"\n                style=\"padding: 5px 10px; border-radius: 4px; border: 1px solid #ddd; background: #f8f9fa; margin-right: 10px;\">\n            上一頁\n        </button>\n        <span style=\"margin: 0 15px;\">第 {{currentPage}} 頁，共 {{totalPages()}} 頁</span>\n        <button ng-click=\"nextPage()\" ng-disabled=\"currentPage >= totalPages()\"\n                style=\"padding: 5px 10px; border-radius: 4px; border: 1px solid #ddd; background: #f8f9fa; margin-left: 10px;\">\n            下一頁\n        </button>\n    </div>\n\n    <div style=\"display: flex; flex-wrap: wrap; gap: 15px; justify-content: center;\">\n        <!-- 使用ng-repeat並添加分頁和排序 -->\n        <div ng-repeat=\"rate in pagedItems()\"\n            style=\"flex: 1; min-width: 250px; max-width: 300px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 3px 6px rgba(0,0,0,0.16); padding: 15px; background-color: white;\">\n\n            <div style=\"display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;\">\n                <h4 style=\"margin: 0; color: #34495e; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px;\"\n                    title=\"{{rate.country}}\">{{rate.country}}</h4>\n                <span style=\"font-weight: bold; font-size: 18px; color: {{getGrowthRateColor(rate.growthRate)}};\">{{rate.growthRate}}%</span>\n            </div>\n\n            <div style=\"height: 4px; width: 100%; background-color: #ecf0f1; border-radius: 2px; margin: 10px 0;\">\n                <div\n                    style=\"height: 100%; background-color: {{getGrowthRateColor(rate.growthRate)}}; border-radius: 2px; width: {{getBarWidth(rate.growthRate)}}%;\">\n                </div>\n            </div>\n\n            <div style=\"display: flex; justify-content: space-between; color: #7f8c8d; font-size: 14px;\">\n                <span>\n                    <i class=\"fa fa-calendar-o\"></i> 起始: {{rate.startValue}}M\n                </span>\n                <span>→</span>\n                <span>\n                    <i class=\"fa fa-calendar\"></i> 現在: {{rate.endValue}}M\n                </span>\n            </div>\n        </div>\n    </div>\n\n    <div style=\"margin-top: 20px; text-align: center; color: #7f8c8d;\" ng-if=\"filteredItems().length === 0\">\n        沒有找到符合條件的國家。\n    </div>\n\n    <p style=\"color: #7f8c8d; font-size: 12px; text-align: right; margin-top: 10px;\">\n        數據來源: disease.sh API | 最後更新: {{msg.lastUpdate}}\n    </p>\n</div>\n\n<script>\n    (function(scope) {\n    // 初始化變量\n    scope.searchCountry = '';\n    scope.sortOption = 'growthDesc';\n    scope.currentPage = 1;\n    scope.pageSize = 12; // 每頁顯示的國家數量\n    \n    // 過濾國家列表\n    scope.filteredItems = function() {\n        if (!scope.msg || !scope.msg.growthRates) return [];\n        \n        // 套用搜尋過濾\n        var filtered = scope.msg.growthRates.filter(function(item) {\n            return !scope.searchCountry || \n                   item.country.toLowerCase().includes(scope.searchCountry.toLowerCase());\n        });\n        \n        // 套用排序\n        filtered.sort(function(a, b) {\n            switch(scope.sortOption) {\n                case 'growthDesc':\n                    return parseFloat(b.growthRate) - parseFloat(a.growthRate);\n                case 'growthAsc':\n                    return parseFloat(a.growthRate) - parseFloat(b.growthRate);\n                case 'country':\n                    return a.country.localeCompare(b.country);\n                case 'endValueDesc':\n                    return parseFloat(b.endValue) - parseFloat(a.endValue);\n                case 'endValueAsc':\n                    return parseFloat(a.endValue) - parseFloat(b.endValue);\n                default:\n                    return parseFloat(b.growthRate) - parseFloat(a.growthRate);\n            }\n        });\n        \n        return filtered;\n    };\n    \n    // 計算總頁數\n    scope.totalPages = function() {\n        var filtered = scope.filteredItems();\n        return Math.ceil(filtered.length / scope.pageSize) || 1;\n    };\n    \n    // 獲取當前頁的項目\n    scope.pagedItems = function() {\n        var filtered = scope.filteredItems();\n        var start = (scope.currentPage - 1) * scope.pageSize;\n        return filtered.slice(start, start + scope.pageSize);\n    };\n    \n    // 分頁控制\n    scope.prevPage = function() {\n        if (scope.currentPage > 1) {\n            scope.currentPage--;\n        }\n    };\n    \n    scope.nextPage = function() {\n        if (scope.currentPage < scope.totalPages()) {\n            scope.currentPage++;\n        }\n    };\n    \n    // 監聽搜尋和排序變化，重置到第一頁\n    scope.$watch('searchCountry', function() {\n        scope.currentPage = 1;\n    });\n    \n    scope.$watch('sortOption', function() {\n        scope.currentPage = 1;\n    });\n    \n    // 根據增長率獲取進度條寬度\n    scope.getBarWidth = function(growthRate) {\n        var rate = parseFloat(growthRate);\n        if (isNaN(rate)) return 0;\n        \n        if (rate > 10000) return 100;\n        if (rate < 0) return 0;\n        \n        // 對數縮放以處理廣泛的增長率範圍\n        return Math.min(100, Math.max(1, Math.log10(rate + 1) * 25));\n    };\n    \n    // 根據增長率獲取顏色\n    scope.getGrowthRateColor = function(growthRate) {\n        var rate = parseFloat(growthRate);\n        if (isNaN(rate)) return '#7f8c8d';\n        \n        if (rate > 1000) return '#27ae60';\n        if (rate > 500) return '#2ecc71';\n        if (rate > 200) return '#3498db';\n        if (rate > 100) return '#1abc9c';\n        if (rate > 50) return '#f1c40f';\n        if (rate > 10) return '#e67e22';\n        if (rate > 0) return '#e74c3c';\n        return '#7f8c8d';\n    };\n})(scope);\n</script>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 1400,
+        "y": 900,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "8a25747062096bfc",
+        "type": "ui_button",
+        "z": "dcb11d42f41b6ef5",
+        "name": "手動更新數據",
+        "group": "56d8a319d421ef23",
+        "order": 4,
+        "width": 4,
+        "height": 1,
+        "passthru": false,
+        "label": "刷新數據",
+        "tooltip": "點擊獲取最新疫苗接種數據",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "sync",
+        "payload": "",
+        "payloadType": "date",
+        "topic": "update",
+        "topicType": "str",
+        "x": 460,
+        "y": 920,
+        "wires": [
+            [
+                "768a70454fc4dbb1"
+            ]
+        ]
+    },
+    {
+        "id": "a67f4deb0221967e",
+        "type": "ui_spacer",
+        "z": "dcb11d42f41b6ef5",
+        "name": "spacer",
+        "group": "56d8a319d421ef23",
+        "order": 5,
+        "width": 8,
+        "height": 1
+    },
+    {
+        "id": "85c8614b301170a7",
+        "type": "ui_group",
+        "name": "控制板",
+        "tab": "9d0979cd68076a84",
+        "order": 1,
+        "disp": true,
+        "width": 12,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "5781e3dc3d91229c",
+        "type": "ui_group",
+        "name": "各國概況",
+        "tab": "9d0979cd68076a84",
+        "order": 3,
+        "disp": true,
+        "width": 12,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "d2d75e8428895025",
+        "type": "ui_group",
+        "name": "全球概況",
+        "tab": "9d0979cd68076a84",
+        "order": 2,
+        "disp": true,
+        "width": 12,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "8a9f423b26014113",
+        "type": "ui_group",
+        "name": "各國疫情數據表格",
+        "tab": "9d0979cd68076a84",
+        "order": 4,
+        "disp": true,
+        "width": 12,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "a3bbd9e94bb720c8",
+        "type": "ui_group",
+        "name": "全球疫苗接種概況",
+        "tab": "9d0979cd68076a84",
+        "order": 6,
+        "disp": true,
+        "width": 12,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "56d8a319d421ef23",
+        "type": "ui_group",
+        "name": "疫苗接種狀況",
+        "tab": "9d0979cd68076a84",
+        "order": 5,
+        "disp": true,
+        "width": "12",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "9d0979cd68076a84",
+        "type": "ui_tab",
+        "name": "傳染病監控儀表板",
+        "icon": "dashboard",
+        "order": 1,
+        "disabled": false,
+        "hidden": false
+    }
+]
