@@ -43,7 +43,6 @@
     │── screenshots/       # 儀表板畫面截圖
     │   ├── global_view.png
     │   ├── country_view.png
-    │   ├── risk_score.png
     │── docs/
     │   └── architecture.png   # Flow 架構截圖
     ```
