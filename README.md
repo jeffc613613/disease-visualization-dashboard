@@ -42,7 +42,6 @@
 - 按下 Deploy 即可
 
 ## 專案結構
-    ```bash
     disease-visualization-dashboard/
     │── README.md          # 說明文件
     │── flows.json         # Node-RED Flow (疾病可視化儀表板.json)
@@ -51,7 +50,6 @@
     │   ├── global_vaccine_tracker.png
     │── docs/
     │   └── architecture.png   # Flow 架構截圖
-    ```
 ## 使用技術
 - Node-RED
 - JavaScript (for Function nodes)
